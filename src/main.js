@@ -14,8 +14,7 @@ const actions = new Map([
   // ['trip', 6],
 ]);
 
-const data = {
-  images: ['./src/assets/sprites/woman.png'],
+const commonData = {
   frames: {width: 64, height: 64, regX: 32, regY: 64, spacing: 0, margin: 0},
   animations: {
     castSpellUp: [0, 6],
@@ -26,18 +25,21 @@ const data = {
   framerate: 14,
 };
 
-const spriteSheet = new createjs.SpriteSheet(data);
+const femaleSpriteSheet = new createjs.SpriteSheet(
+  Object.assign({}, commonData, {images: ['./src/assets/sprites/woman.png']}));
+const maleSpriteSheet = new createjs.SpriteSheet(
+  Object.assign({}, commonData, {images: ['./src/assets/sprites/man.png']}));
 
 let clubbers = [];
-function spawnClubber(name) {
-  const c = new Clubber(name, spriteSheet);
+function spawnClubber(name, sex) {
+  const c = new Clubber(name, sex == 'male' ? maleSpriteSheet : femaleSpriteSheet);
   clubbers.push(c);
   stage.addChild(c);
   c.play();
 }
 
-spawnClubber('Leonardo');
-spawnClubber('Elena');
+spawnClubber('Leonardo', 'male');
+spawnClubber('Elena', 'female');
 createjs.Ticker.addEventListener('tick', tick);
 
 export default function tick(event) {
