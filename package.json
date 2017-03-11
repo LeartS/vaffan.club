@@ -12,11 +12,13 @@
     "babel-loader": "^6.3.2",
     "babel-preset-es2016": "^6.22.0",
     "createjs-easeljs": "0.8.2",
-    "webpack": "^2.2.1"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "serve": "webpack-dev-server --hot"
   },
   "author": "Leonardo \"LeartS\" Donelli",
   "license": "GPLv3"
