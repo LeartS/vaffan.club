@@ -1,7 +1,8 @@
 html, body {
     margin: 0;
     padding: 0;
-    background-color: black;
+    background-color: #212121;
+    overflow: hidden;
 }
 
 canvas {
@@ -10,4 +11,18 @@ canvas {
     max-width: 100vw;
     max-height: 100vh;
     margin: auto;
+}
+
+#info {
+    width: 200px;
+    height: 80px;
+    /* background-color: white; */
+    position: absolute;
+    border: 1px solid white;
+    border-radius: 5px;
+    font-size: 10px;
+    color: white;
+    top: 0px;
+    left: 0px;
+    padding: 10px;
 }

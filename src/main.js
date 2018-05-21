@@ -1,20 +1,9 @@
 import createjs from 'createjs-easeljs';
-
 import Clubber from './clubber.js';
-
-const stage = new createjs.Stage('mainCanvas');
-const canvasDom = document.getElementById('mainCanvas');
-
-const actions = [
-  ['spellcast', 7],
-  ['thrust', 8],
-  ['walk', 9],
-  ['slash', 6],
-  ['shoot', 13],
-  // ['trip', 6],
-];
-
-const framesPerRow = 13;
+import {
+  frameSettings, framesPerRow,
+  modelWidth, modelHeight, actions
+} from './constants.js';
 
 const buildAnimationsObj = (actionsManifest, framesPerRow) => {
   let animationsObj = {};
@@ -27,69 +16,48 @@ const buildAnimationsObj = (actionsManifest, framesPerRow) => {
   return animationsObj;
 };
 
-const animations = buildAnimationsObj(actions, 13);
+const init = () => {
+  const stage = new createjs.Stage('mainCanvas');
+  const canvasDom = document.getElementById('mainCanvas');
 
-const commonData = {
-  frames: {width: 64, height: 64, regX: 32, regY: 64, spacing: 0, margin: 0},
-  animations: buildAnimationsObj(actions, 13),
-  framerate: 14,
-};
+  const tooltip = new createjs.DOMElement('info');
+  console.log(tooltip);
+  tooltip.regX = 0;
+  tooltip.regY = 0;
+  stage.addChild(tooltip);
 
-const femaleSpriteSheet = new createjs.SpriteSheet(
-  Object.assign({}, commonData, {images: ['./src/assets/sprites/woman.png']}));
-const maleSpriteSheet = new createjs.SpriteSheet(
-  Object.assign({}, commonData, {images: ['./src/assets/sprites/man.png']}));
+  const animations = buildAnimationsObj(actions, framesPerRow);
+  const commonData = {
+    frames: frameSettings,
+    animations: animations,
+    framerate: 9,
+  };
 
-let clubbers = [];
-function spawnClubber(name, sex) {
-  const c = new Clubber(name, sex == 'male' ? maleSpriteSheet : femaleSpriteSheet);
-  clubbers.push(c);
-  stage.addChild(c);
-  c.play();
-}
+  const femaleSpriteSheet = new createjs.SpriteSheet(
+    Object.assign({}, commonData, {images: ['./src/assets/sprites/woman.png']}));
+  const maleSpriteSheet = new createjs.SpriteSheet(
+    Object.assign({}, commonData, {images: ['./src/assets/sprites/man.png']}));
 
-spawnClubber('Leonardo', 'male');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-spawnClubber('Elena', 'female');
-createjs.Ticker.addEventListener('tick', tick);
-createjs.Ticker.framerate = 25;
-
-export default function tick(event) {
-  for (let clubber of clubbers) {
-    clubber.update();
+  function spawnClubber(name, sex) {
+    const c = new Clubber(name, sex == 'male' ? maleSpriteSheet : femaleSpriteSheet);
+    clubbers.push(c);
+    stage.addChild(c);
+    c.play();
   }
-  stage.update(event);
+
+  const tick = (event) => {
+    for (let clubber of clubbers) {
+      tooltip.x = clubber.x + frameSettings.width / 2;
+      tooltip.y = clubber.y - frameSettings.height;
+      clubber.update(event);
+    }
+    stage.update(event);
+  }
+
+  let clubbers = [];
+  spawnClubber('Leonardo', 'male');
+  createjs.Ticker.addEventListener('tick', tick);
+  createjs.Ticker.framerate = 25;
 }
+
+window.onload = init;
