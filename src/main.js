@@ -15,49 +15,51 @@ const buildAnimationsObj = (actionsManifest, framesPerRow) => {
   });
   return animationsObj;
 };
+const animations = buildAnimationsObj(actions, framesPerRow);
 
-const init = () => {
-  const stage = new createjs.Stage('mainCanvas');
-  const canvasDom = document.getElementById('mainCanvas');
+const commonData = {
+  frames: frameSettings,
+  animations: animations,
+  framerate: 9,
+};
 
-  const tooltip = new createjs.DOMElement('info');
-  console.log(tooltip);
-  tooltip.regX = 0;
-  tooltip.regY = 0;
-  stage.addChild(tooltip);
+const femaleSpriteSheet = new createjs.SpriteSheet(
+  Object.assign({}, commonData, {images: ['./src/assets/sprites/woman.png']}));
+const maleSpriteSheet = new createjs.SpriteSheet(
+  Object.assign({}, commonData, {images: ['./src/assets/sprites/man.png']}));
 
-  const animations = buildAnimationsObj(actions, framesPerRow);
-  const commonData = {
-    frames: frameSettings,
-    animations: animations,
-    framerate: 9,
-  };
+class Club {
+  constructor () {
+    this.clubbers = [];
+    this.stage = new createjs.Stage('mainCanvas');
+    this.canvasDom = document.getElementById('mainCanvas');
+    this.tooltip = new createjs.DOMElement('info');
+    console.log(this.tooltip);
+    this.tooltip.regX = 0;
+    this.tooltip.regY = 0;
+    this.stage.addChild(this.tooltip);
+    this.spawnClubber('Leonardo', 'male');
+    createjs.Ticker.addEventListener('tick', this.tick.bind(this));
+    createjs.Ticker.framerate = 25;
+  }
 
-  const femaleSpriteSheet = new createjs.SpriteSheet(
-    Object.assign({}, commonData, {images: ['./src/assets/sprites/woman.png']}));
-  const maleSpriteSheet = new createjs.SpriteSheet(
-    Object.assign({}, commonData, {images: ['./src/assets/sprites/man.png']}));
-
-  function spawnClubber(name, sex) {
+  spawnClubber (name, sex) {
     const c = new Clubber(name, sex == 'male' ? maleSpriteSheet : femaleSpriteSheet);
-    clubbers.push(c);
-    stage.addChild(c);
+    this.clubbers.push(c);
+    this.stage.addChild(c);
     c.play();
   }
 
-  const tick = (event) => {
-    for (let clubber of clubbers) {
-      tooltip.x = clubber.x + frameSettings.width / 2;
-      tooltip.y = clubber.y - frameSettings.height;
+  tick (event) {
+    for (let clubber of this.clubbers) {
+      this.tooltip.x = clubber.x + frameSettings.width / 2;
+      this.tooltip.y = clubber.y - frameSettings.height;
       clubber.update(event);
     }
-    stage.update(event);
+    this.stage.update(event);
   }
-
-  let clubbers = [];
-  spawnClubber('Leonardo', 'male');
-  createjs.Ticker.addEventListener('tick', tick);
-  createjs.Ticker.framerate = 25;
 }
 
-window.onload = init;
+
+const club = new Club();
+window.onload = club.init;
